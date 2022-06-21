@@ -30,12 +30,19 @@ const CreatePost = () => {
   //TODO: For more indepth filtering and such, use this format:
   //TODO https://api.jikan.moe/v4/top/anime?type=tv&filter=bypopularity
 
+  const pageOne = `https://api.jikan.moe/v4/top/anime?page=1`;
+  const pageTwo = `https://api.jikan.moe/v4/top/anime?page=2`;
+
+  //https://api.jikan.moe/v4/top/type/page/subtype
+
   const GetTopAnime = () => {
     setLoading(true);
-    axios
-      .get(`https://api.jikan.moe/v4/top/anime`)
-      //https://api.jikan.moe/v4/top/type/page/subtype
-      .then(({ data }) => {
+    Promise.all([fetch(pageOne), fetch(pageTwo)])
+      .then(async ([res1, res2]) => {
+        const a = await res1.json();
+        const b = await res2.json();
+
+        const data = a.data + b.data;
         console.log(data.data);
         setTopAnime(data.data);
         setFiltered(data.data);
@@ -44,6 +51,17 @@ const CreatePost = () => {
       .catch((error) => {
         console.log(error);
       });
+    /*     axios
+      .all([requestPageOne, requestPageTwo])
+      .then(({ data }) => {
+        console.log(data.data);
+        setTopAnime(data.data);
+        setFiltered(data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      }); */
   };
 
   useEffect(() => {
